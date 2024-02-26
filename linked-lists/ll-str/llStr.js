@@ -26,9 +26,20 @@ class LLStr {
     }
     /** push(val): add new value to end of list. */
     push(val) {
+        const newNode = new NodeStr(val);
+        if (this.head === null)
+            this.head = newNode;
+        if (this.tail !== null)
+            this.tail.next = newNode;
+        this.tail = newNode;
     }
     /** unshift(val): add new value to start of list. */
     unshift(val) {
+        const newNode = new NodeStr(val);
+        if (this.tail === null)
+            this.tail = this.head;
+        newNode.next = this.head;
+        this.head = newNode;
     }
     /** pop(): return & remove last item.
      *
