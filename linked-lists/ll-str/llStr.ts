@@ -37,29 +37,33 @@ class LLStr {
     for (const val of vals) this.push(val);
   }
 
+  /** _getNodeAt(idx): retrieve node at idx.
+   *
+   * Returns null if not found.
+   **/
+
+  private _getNodeAt(idx: number): NodeStr | null {
+    let curr: NodeStr | null = this.head;
+    let count = 0;
+
+    while (curr !== null && count !== idx) {
+      count++;
+      curr = curr.next;
+    }
+
+    return curr;
+  }
+
   /** push(val): add new value to end of list. */
 
   push(val: string): void {
-    const newNode = new NodeStr(val);
-
-    if (this.head === null) this.head = newNode;
-    if (this.tail !== null) this.tail.next = newNode;
-
-    this.tail = newNode;
-    this.length++;
+    return this.insertAt(this.length, val);
   }
 
   /** unshift(val): add new value to start of list. */
 
   unshift(val: string): void {
-    const newNode = new NodeStr(val);
-    newNode.next = this.head;
-    this.head = newNode;
-
-    if (this.head === null) this.head = newNode;
-    if (this.tail === null) this.tail = this.head;
-
-    this.length++;
+    return this.insertAt(0, val);
   }
 
   /** pop(): return & remove last item.
@@ -68,27 +72,7 @@ class LLStr {
    **/
 
   pop(): string {
-    if (this.head === null) throw new IndexError();
-
-    let current = this.head;
-    let previousNode: NodeStr | null = null;
-
-    while (current.next !== null) {
-      previousNode = current;
-      current = current.next;
-    }
-
-    if (previousNode !== null) {
-      previousNode.next = null;
-      this.tail = previousNode;
-    } else {
-      this.tail = null;
-      this.head = null;
-    }
-
-    this.length--;
-
-    return current.val;
+    return this.removeAt(this.length - 1);
   }
 
   /** shift(): return & remove first item.
@@ -97,16 +81,7 @@ class LLStr {
    **/
 
   shift(): string {
-    if (this.head === null) throw new IndexError("Cannot shift from empty list!");
-
-    const removedVal = this.head.val;
-    this.head = this.head.next;
-
-    if (this.head === null) this.tail = null;
-
-    this.length--;
-
-    return removedVal;
+    return this.removeAt(0);
   }
 
   /** getAt(idx): get val at idx.
@@ -115,19 +90,11 @@ class LLStr {
    **/
 
   getAt(idx: number): string {
-    if (idx < 0 || idx >= this.length) throw new IndexError("Index out of bounds");
-
-    let current = this.head;
-    let currentIdx = 0;
-
-    while (currentIdx < idx && current !== null) {
-      current = current.next;
-      currentIdx++;
+    if (idx < 0 || idx >= this.length) {
+      throw new IndexError("Index out of bounds");
     }
 
-    if (current === null) throw new IndexError("Index not found");
-
-    return current.val;
+    return this._getNodeAt(idx)!.val;
   }
 
   /** setAt(idx, val): set val at idx to val.
@@ -136,19 +103,12 @@ class LLStr {
    **/
 
   setAt(idx: number, val: string): void {
-    if (idx < 0 || idx >= this.length) throw new IndexError("Index out of bounds");
-
-    let current = this.head;
-    let currentIdx = 0;
-
-    while (currentIdx < idx && current !== null) {
-      current = current.next;
-      currentIdx++;
+    if (idx >= this.length || idx < 0) {
+      throw new IndexError("Index out of bounds");
     }
 
-    if (current === null) throw new IndexError("Index not found");
-
-    current.val = val;
+    let cur = this._getNodeAt(idx);
+    cur!.val = val;
   }
 
   /** insertAt(idx, val): add node w/val before idx.
@@ -157,31 +117,33 @@ class LLStr {
    **/
 
   insertAt(idx: number, val: string): void {
-    if (idx < 0 || idx > this.length) throw new IndexError("Index out of bounds");
-
-    let current = this.head;
-    let currentIdx = 0;
-
-    if (idx === 0) {
-      this.unshift(val);
-      return;
+    if (idx < 0 || idx > this.length) {
+      throw new IndexError("Index out of bounds");
     }
-
-    if (idx === this.length) {
-      this.push(val);
-      return;
-    }
-
-    while (currentIdx < idx - 1 && current !== null) {
-      current = current.next;
-      currentIdx++;
-    }
-
-    if (current === null) throw new IndexError("Index not found");
 
     const newNode = new NodeStr(val);
-    newNode.next = current.next;
-    current.next = newNode;
+
+    // unshift
+    if (idx === 0) {
+      newNode.next = this.head;
+      this.head = newNode;
+      if (this.length === 0) this.tail = newNode;
+    }
+
+    // push
+    else if (idx === this.length) {
+      const prev = this._getNodeAt(idx - 1);
+      newNode.next = prev!.next;
+      prev!.next = newNode;
+      this.tail = newNode;
+    }
+
+    // general case
+    else {
+      const prev = this._getNodeAt(idx - 1);
+      newNode.next = prev!.next;
+      prev!.next = newNode;
+    }
 
     this.length++;
   }
@@ -192,39 +154,34 @@ class LLStr {
    **/
 
   removeAt(idx: number): string {
-    if (idx < 0 || idx > this.length) throw new IndexError("Index out of bounds");
-
-    let current = this.head;
-    let previousNode: NodeStr | null = null;
-    let currentIdx = 0;
-
-    while (currentIdx < idx && current !== null) {
-      previousNode = current;
-      current = current.next;
-      currentIdx++;
+    if (idx < 0 || idx > this.length) {
+      throw new IndexError("Index out of bounds");
     }
 
-    if (current === null) throw new IndexError("Index not found");
-
-    if (previousNode !== null) {
-      previousNode.next = current.next;
-    } else {
-      this.head = current.next;
+    // shift
+    if (idx === 0) {
+      const me = this.head!;
+      this.head = me.next;
+      if (this.head === null) this.tail = null;
+      this.length--;
+      return me.val;
     }
 
-    if (current === this.tail) {
-      this.tail = previousNode;
+    // general case
+    else {
+      const prev = this._getNodeAt(idx - 1);
+      const me = prev!.next!;
+      prev!.next = me.next;
+      if (idx === this.length - 1) this.tail = prev;
+      this.length--;
+      return me.val;
     }
-
-    this.length--;
-
-    return current.val;
   }
 
   /** toArray (useful for tests!) */
 
   toArray(): string[] {
-    const out = [];
+    const out: string[] = [];
     let current = this.head;
 
     while (current) {
