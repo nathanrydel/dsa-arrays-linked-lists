@@ -114,7 +114,19 @@ class LLStr {
    **/
 
   getAt(idx: number): string {
-    return "x";
+    if (idx < 0 || idx >= this.length) throw new IndexError("Index out of bounds");
+
+    let current = this.head;
+    let currentIdx = 0;
+
+    while (currentIdx < idx && current !== null) {
+      current = current.next;
+      currentIdx++;
+    }
+
+    if (current === null) throw new IndexError("Index not found");
+
+    return current.val;
   }
 
   /** setAt(idx, val): set val at idx to val.
@@ -123,6 +135,19 @@ class LLStr {
    **/
 
   setAt(idx: number, val: string): void {
+    if (idx < 0 || idx >= this.length) throw new IndexError("Index out of bounds");
+
+    let current = this.head;
+    let currentIdx = 0;
+
+    while (currentIdx < idx && current !== null) {
+      current = current.next;
+      currentIdx++;
+    }
+
+    if (current === null) throw new IndexError("Index not found");
+
+    current.val = val;
   }
 
   /** insertAt(idx, val): add node w/val before idx.
