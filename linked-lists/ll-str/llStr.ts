@@ -154,7 +154,7 @@ class LLStr {
    **/
 
   removeAt(idx: number): string {
-    if (idx < 0 || idx > this.length) {
+    if (idx >= this.length || idx < 0) {
       throw new IndexError("Index out of bounds");
     }
 
