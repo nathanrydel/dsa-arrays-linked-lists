@@ -67,17 +67,17 @@ class LLStr {
    **/
 
   pop(): string {
-    if(this.head === null) throw new IndexError();
+    if (this.head === null) throw new IndexError();
 
     let current = this.head;
     let previousNode: NodeStr | null = null;
 
-    while(current.next !== null) {
+    while (current.next !== null) {
       previousNode = current;
       current = current.next;
     }
 
-    if(previousNode !== null){
+    if (previousNode !== null) {
       previousNode.next = null;
       this.tail = previousNode;
     } else {
@@ -96,7 +96,16 @@ class LLStr {
    **/
 
   shift(): string {
-    return "x";
+    if (this.head === null) throw new IndexError("Cannot shift from empty list!");
+
+    const removedVal = this.head.val;
+    this.head = this.head.next;
+
+    if (this.head === null) this.tail = null;
+
+    this.length--;
+
+    return removedVal;
   }
 
   /** getAt(idx): get val at idx.

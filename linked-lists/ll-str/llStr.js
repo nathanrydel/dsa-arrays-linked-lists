@@ -32,6 +32,7 @@ class LLStr {
         if (this.tail !== null)
             this.tail.next = newNode;
         this.tail = newNode;
+        this.length++;
     }
     /** unshift(val): add new value to start of list. */
     unshift(val) {
@@ -40,20 +41,45 @@ class LLStr {
             this.tail = this.head;
         newNode.next = this.head;
         this.head = newNode;
+        this.length++;
     }
     /** pop(): return & remove last item.
      *
      * Throws IndexError on empty list.
      **/
     pop() {
-        return "x";
+        if (this.head === null)
+            throw new IndexError();
+        let current = this.head;
+        let previousNode = null;
+        while (current.next !== null) {
+            previousNode = current;
+            current = current.next;
+        }
+        if (previousNode !== null) {
+            previousNode.next = null;
+            this.tail = previousNode;
+        }
+        else {
+            this.tail = null;
+            this.head = null;
+        }
+        this.length--;
+        return current.val;
     }
     /** shift(): return & remove first item.
      *
      * Throws IndexError on empty list.
      **/
     shift() {
-        return "x";
+        if (this.head === null)
+            throw new IndexError("Cannot shift from empty list!");
+        const removedVal = this.head.val;
+        this.head = this.head.next;
+        if (this.head === null)
+            this.tail = null;
+        this.length--;
+        return removedVal;
     }
     /** getAt(idx): get val at idx.
      *
