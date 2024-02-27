@@ -150,7 +150,29 @@ class LLStr {
      * Throws IndexError if not found.
      **/
     removeAt(idx) {
-        return "x";
+        if (idx < 0 || idx > this.length)
+            throw new IndexError("Index out of bounds");
+        let current = this.head;
+        let previousNode = null;
+        let currentIdx = 0;
+        while (currentIdx < idx && current !== null) {
+            previousNode = current;
+            current = current.next;
+            currentIdx++;
+        }
+        if (current === null)
+            throw new IndexError("Index not found");
+        if (previousNode !== null) {
+            previousNode.next = current.next;
+        }
+        else {
+            this.head = current.next;
+        }
+        if (current === this.tail) {
+            this.tail = previousNode;
+        }
+        this.length--;
+        return current.val;
     }
     /** toArray (useful for tests!) */
     toArray() {
