@@ -122,6 +122,28 @@ class LLStr {
      * Throws IndexError if not found.
      **/
     insertAt(idx, val) {
+        if (idx < 0 || idx > this.length)
+            throw new IndexError("Index out of bounds");
+        let current = this.head;
+        let currentIdx = 0;
+        if (idx === 0) {
+            this.unshift(val);
+            return;
+        }
+        if (idx === this.length) {
+            this.push(val);
+            return;
+        }
+        while (currentIdx < idx - 1 && current !== null) {
+            current = current.next;
+            currentIdx++;
+        }
+        if (current === null)
+            throw new IndexError("Index not found");
+        const newNode = new NodeStr(val);
+        newNode.next = current.next;
+        current.next = newNode;
+        this.length++;
     }
     /** removeAt(idx): return & remove item at idx,
      *

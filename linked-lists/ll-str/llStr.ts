@@ -157,27 +157,27 @@ class LLStr {
    **/
 
   insertAt(idx: number, val: string): void {
-    if(idx < 0 || idx >= this.length) throw new IndexError("Index out of bounds");
+    if (idx < 0 || idx > this.length) throw new IndexError("Index out of bounds");
 
     let current = this.head;
     let currentIdx = 0;
 
-    if(idx === 0) {
+    if (idx === 0) {
       this.unshift(val);
-      return
+      return;
     }
 
-    if(idx === this.length) {
+    if (idx === this.length) {
       this.push(val);
-      return
+      return;
     }
 
-    while (currentIdx < idx-1 && current !== null) {
+    while (currentIdx < idx - 1 && current !== null) {
       current = current.next;
       currentIdx++;
     }
 
-    if(current === null) throw new IndexError("Index not found");
+    if (current === null) throw new IndexError("Index not found");
 
     const newNode = new NodeStr(val);
     newNode.next = current.next;
