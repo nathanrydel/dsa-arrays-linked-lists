@@ -37,10 +37,12 @@ class LLStr {
     /** unshift(val): add new value to start of list. */
     unshift(val) {
         const newNode = new NodeStr(val);
-        if (this.tail === null)
-            this.tail = this.head;
         newNode.next = this.head;
         this.head = newNode;
+        if (this.head === null)
+            this.head = newNode;
+        if (this.tail === null)
+            this.tail = this.head;
         this.length++;
     }
     /** pop(): return & remove last item.

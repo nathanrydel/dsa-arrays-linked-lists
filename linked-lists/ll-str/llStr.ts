@@ -53,11 +53,12 @@ class LLStr {
 
   unshift(val: string): void {
     const newNode = new NodeStr(val);
-
-    if (this.tail === null) this.tail = this.head;
-
     newNode.next = this.head;
     this.head = newNode;
+
+    if (this.head === null) this.head = newNode;
+    if (this.tail === null) this.tail = this.head;
+
     this.length++;
   }
 
